@@ -90,7 +90,4 @@ Con el servidor corriendo (`python app.py`), abre Postman y prueba lo siguiente:
 
 
 
-> Nota: como el stock vive en el mismo servidor, si compras desde Postman
-> mientras tienes la página abierta en el navegador, el navegador no se
-> entera del cambio hasta que recargues (F5) — solo actualiza el número
-> cuando tú haces clic en su propio botón "Comprar".
+
