@@ -37,11 +37,7 @@ Continúa con el paso 1 para dejar el proyecto corriendo.
 5. Actívalo:
    - **Windows (PowerShell):** `.venv\Scripts\Activate.ps1`
    - **Windows (cmd):** `.venv\Scripts\activate.bat`
-   - **Mac/Linux:** `source .venv/bin/activate`
-
-   Sabrás que funcionó porque aparece `(.venv)` al inicio de la línea. Si VSCode
-   pregunta si quieres usar ese entorno como intérprete, di que sí (o hazlo
-   manualmente con `Ctrl+Shift+P` → *Python: Select Interpreter*).
+  
 6. Instala las dependencias:
 ```bash
    pip install -r requirements.txt
@@ -50,7 +46,6 @@ Continúa con el paso 1 para dejar el proyecto corriendo.
 ```bash
    python app.py
 ```
-   Debe aparecer algo como `Running on http://127.0.0.1:5000`.
 8. Abre [http://localhost:5000](http://localhost:5000) en tu navegador para ver el catálogo.
 
 Deja esa terminal abierta mientras trabajas — si la cierras, el servidor se apaga.
@@ -93,15 +88,7 @@ Con el servidor corriendo (`python app.py`), abre Postman y prueba lo siguiente:
 ```
 - Si repites la misma petición, el stock sigue bajando cada vez.
 
-### Casos de error para probar
-- **Sin stock (400):** sigue comprando el mismo producto hasta llegar a 0 unidades.
-```json
-  { "estado": "error", "mensaje": "Sin stock disponible" }
-```
-- **Producto inexistente (404):** prueba con un id que no exista, ej. `http://127.0.0.1:5000/api/productos/999/comprar`.
-```json
-  { "estado": "error", "mensaje": "Producto no encontrado" }
-```
+
 
 > Nota: como el stock vive en el mismo servidor, si compras desde Postman
 > mientras tienes la página abierta en el navegador, el navegador no se
