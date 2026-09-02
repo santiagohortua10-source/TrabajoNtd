@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #111827; color: #f3f4f6; margin: 0; padding: 2rem; }
+        h1 { text-align: center; }
+        .productos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 2rem auto; max-width: 1000px; }
+        .card { background: #1f2937; border-radius: 12px; padding: 1rem; text-align: center; display: flex; flex-direction: column; }
+        .card .icono { font-size: 2rem; }
+        .card .precio { color: #34d399; font-weight: bold; margin-top: .5rem; }
+        .card .stock { margin-top: .5rem; font-size: .9rem; color: #9ca3af; }
+        .card .stock strong { color: #f3f4f6; }
+        .card button { margin-top: .75rem; padding: .6rem; border: none; border-radius: 8px; background: #34d399; color: #111827; font-weight: bold; cursor: pointer; transition: background .2s; }
+        .card button:hover:not(:disabled) { background: #10b981; }
+        .card button:disabled { background: #4b5563; color: #9ca3af; cursor: not-allowed; }
+        .card.agotado { opacity: .6; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Catálogo Tecnológico</h1>
+    <div class="productos">
+        {% for producto in productos %}
+        <div class="card" data-id="{{ producto.id }}">
+            <div class="icono">{{ producto.icono }}</div>
+            <h3>{{ producto.nombre }}</h3>
+            <p>{{ producto.descripcion }}</p>
+            <div class="precio">${{ producto.precio }}</div>
+            <div class="stock">Stock: <strong class="stock-valor">{{ producto.stock }}</strong> unidades</div>
+            <button class="btn-comprar" {% if producto.stock <= 0 %}disabled{% endif %}>
+                {% if producto.stock <= 0 %}Agotado{% else %}Comprar{% endif %}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Un solo listener para todos los botones: evita mezclar Jinja con JS inline
+        document.querySelectorAll('.btn-comprar').forEach(function (boton) {
+            boton.addEventListener('click', function () {
+                const card = boton.closest('.card');
+                const id = card.dataset.id;
+                comprar(id, boton, card);
+            });
+        });
+
+        async function comprar(id, boton, card) {
+            boton.disabled = true; // evita doble clic mientras responde el servidor
+
+            try {
+                const res = await fetch(`/api/productos/${id}/comprar`, { method: 'POST' });
+                const data = await res.json();
+
+                if (data.estado === 'exito') {
+                    const nuevoStock = data.datos.stock;
+                    card.querySelector('.stock-valor').textContent = nuevoStock;
+
+                    if (nuevoStock <= 0) {
+                        boton.textContent = 'Agotado';
+                        card.classList.add('agotado');
+                    } else {
+                        boton.disabled = false;
+                    }
+                } else {
+                    alert(data.mensaje);
+                    boton.disabled = false;
+                }
+            } catch (err) {
+                alert('No se pudo conectar con el servidor.');
+                boton.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
