@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
+
 
 app = Flask(__name__)
 
@@ -95,10 +96,10 @@ def inicio():
 
 @app.route('/api/productos')
 def api_productos():
-    # Endpoint JSON por si otra app necesita los datos
+    # Endpoint (GET) JSON por si otra app necesita los datos
     return jsonify({"estado": "exito", "datos": PRODUCTOS})
 
-
+#METODO POST
 @app.route('/api/productos/<int:producto_id>/comprar', methods=['POST'])
 def comprar_producto(producto_id):
     # Compra 1 unidad del producto indicado: descuenta su stock
@@ -109,6 +110,67 @@ def comprar_producto(producto_id):
             producto['stock'] -= 1
             return jsonify({"estado": "exito", "datos": producto})
     return jsonify({"estado": "error", "mensaje": "Producto no encontrado"}), 404
+
+
+#METODO PUT 
+@app.route('/api/productos/<int:producto_id>', methods=['PUT'])
+def reemplazar_producto(producto_id):
+    datos = request.get_json()
+
+    campos_requeridos = [
+        'nombre',
+        'descripcion',
+        'precio',
+        'icono',
+        'stock'
+    ]
+
+    for campo in campos_requeridos:
+        if campo not in datos:
+            return jsonify({
+                "estado": "error",
+                "mensaje": f"Falta el campo: {campo}"
+            }), 400
+
+    for producto in PRODUCTOS:
+        if producto['id'] == producto_id:
+            producto['nombre'] = datos['nombre']
+            producto['descripcion'] = datos['descripcion']
+            producto['precio'] = datos['precio']
+            producto['icono'] = datos['icono']
+            producto['stock'] = datos['stock']
+
+            return jsonify({
+                "estado": "exito",
+                "mensaje": "Producto actualizado correctamente",
+                "datos": producto
+            })
+
+    return jsonify({
+        "estado": "error",
+        "mensaje": "Producto no encontrado"
+    }), 404
+
+
+
+#METODO DELETE
+@app.route('/api/productos/<int:producto_id>', methods=['DELETE'])
+def eliminar_producto(producto_id):
+    # Elimina el producto indicado
+    for producto in PRODUCTOS:
+        if producto['id'] == producto_id:
+            PRODUCTOS.remove(producto)
+
+            return jsonify({
+                "estado": "exito",
+                "mensaje": "Producto eliminado correctamente",
+                "datos": producto
+            })
+
+    return jsonify({
+        "estado": "error",
+        "mensaje": "Producto no encontrado"
+    }), 404
 
 
 if __name__ == '__main__':
