@@ -88,6 +88,35 @@ Con el servidor corriendo (`python app.py`), abre Postman y prueba lo siguiente:
 ```
 - Si repites la misma petición, el stock sigue bajando cada vez.
 
+### PUT /api/productos/<int:producto_id>
+- Método: `PUT`
+- URL: `http://127.0.0.1:5000/api/productos/<int:producto_id>`
+- `Para poner una modificación en el item uno en el body poner:`{
+    "nombre": "Quantum Phone S Pro",
+    "descripcion": "45G, 2TB, Pantalla ONED y alto rendimiento.",
+    "precio": "4.299.900",
+    "icono": "📱",
+    "stock": 25
+}
+
+- Respuesta esperada(200):
+```{
+    "datos": {
+        "descripcion": "45G, 2TB, Pantalla ONED y alto rendimiento.",
+        "icono": "📱",
+        "id": 1,
+        "nombre": "Quantum Phone S Pro",
+        "precio": "4.299.900",
+        "stock": 25
+    },
+    "estado": "exito",
+    "mensaje": "Producto actualizado correctamente"
+}```
+
+### DELETE /api/productos/<int:producto_id>
+
+
+
 
 
 
